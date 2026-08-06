@@ -1,0 +1,40 @@
+{
+  "name": "buildkit-cache-dance",
+  "version": "3.4.0",
+  "description": "Save `RUN --mount=type=cache` caches on GitHub Actions or other CI platforms",
+  "main": "dist/index.js",
+  "bin": {
+    "buildkit-cache-dance": "dist/index.js"
+  },
+  "scripts": {
+    "build": "ncc build src/index.ts -o dist -m -s",
+    "typecheck": "tsc --noEmit",
+    "test": "node --enable-source-maps ./node_modules/vitest/vitest.mjs "
+  },
+  "keywords": [
+    "buildkit",
+    "cache",
+    "docker",
+    "github",
+    "actions",
+    "workflow"
+  ],
+  "author": "step-security",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "devDependencies": {
+    "@types/node": "^24.12.2",
+    "@vercel/ncc": "^0.44.1",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.3"
+  },
+  "dependencies": {
+    "@actions/core": "^2.0.3",
+    "axios": "^1.19.0",
+    "dockerfile-ast": "^0.7.0",
+    "mri": "^1.2.0",
+    "spawn-please": "^3.0.0"
+  }
+}

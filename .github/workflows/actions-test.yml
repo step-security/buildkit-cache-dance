@@ -1,0 +1,50 @@
+---
+name: Actions Test
+on:
+  push:
+  pull_request:
+jobs:
+  actions_test:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: step-security/setup-buildx-action@v4
+        id: setup-buildx
+      - uses: step-security/metadata-action@v6
+        id: meta
+        with:
+          images: test
+
+      - name: Cache
+        uses: actions/cache@v6
+        id: cache
+        with:
+          path: |
+            var-cache-apt
+            var-lib-apt
+          key: cache-${{ hashFiles('.github/workflows/test/Dockerfile') }}
+
+      - name: inject cache into docker
+        uses: ./
+        with:
+          builder: ${{ steps.setup-buildx.outputs.name }}
+          skip-extraction: false
+          cache-map: |
+            {
+              "var-cache-apt": {
+                "target": "/var/cache/apt",
+                "id": "1"
+              },
+              "var-lib-apt": "/var/lib/apt"
+            }
+
+      - name: Build and push
+        uses: step-security/docker-build-push-action@v7
+        with:
+          context: .github/workflows/test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          push: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
